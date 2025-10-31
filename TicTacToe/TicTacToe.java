@@ -73,48 +73,120 @@ public class TicTacToe
         return new int[] {row, column};
     }
 
-    public boolean evaluateGame(int[] cell, String symbol)
+    public boolean evaluateGame(int[] cell)
     {
-        boolean win = false;
         int startingX = cell[0];
         int startingY = cell[1];
-        int currentX = startingX;
-        int currentY = startingY; 
-        int horizontal = 1;
-        int vertical = 1;
-        int diagonalLeft = 1;
-        int diagonalRight = 1;
+        boolean horizontal = check("horizontal", startingX, startingY);
+        boolean vertical = check("vertical", startingX, startingY);
+        boolean diagonalLeft = check("diagonalLeft", startingX, startingY);
+        boolean diagonalRight = check("diagonalRight", startingX, startingY);
 
-        while(currentX <= sizeX - 1)
+        if (horizontal == true || vertical == true || diagonalLeft == true || diagonalRight == true)
         {
-            currentX++;
-            if (board[currentX][currentY] == symbol)
-            {
-                horizontal++;
-            } else {
-                break;
-            }
+            return true;
+        } else {
+            return false;
         }
-        if (win == true) return true;
-        
-        currentX = startingX;
-        while(currentX >= 0)
-        return false;
     }
 
-    public string move(string axis, int direction, int x, int y, int xBounds, int yBounds)
+    public boolean check(String axis, int x, int y)
     {
+        String symbol = turn == Player.PLAYER1 ? "X" : "O";
+        int xBounds = sizeX - 1;
+        int yBounds = sizeY - 1;
+        int startingX;
+        int startingY;
+        int stepsX;
+        int stepsY;
+        int runningCount = 0;
         switch(axis)
         {
             case "horizontal":
-
+                startingX = x;
+                startingY = 0;
+                while (y <= yBounds)
+                {
+                    String cell = board[startingX][startingY];
+                    if (cell == symbol)
+                    {
+                        runningCount++;
+                    } else {
+                        runningCount = 0;
+                    }
+                    y++;
+                }
                 break;
             case "vertical":
+                startingX = 0;
+                startingY = y;
+                while (y <= xBounds)
+                {
+                    String cell = board[startingX][startingY];
+                    if (cell == symbol)
+                    {
+                        runningCount++;
+                    } else {
+                        runningCount = 0;
+                    }
+                    y++;
+                }
                 break;
             case "diagonalLeft":
+                stepsX = xBounds - x;
+                stepsY = y + 1; 
+                if (stepsX < stepsY)
+                {
+                    startingX = xBounds;
+                    startingY = y - stepsX;
+                } else {
+                    startingX = x + stepsY;
+                    startingY = 0;
+                }
+
+                while(startingX >= 0 && startingY <= yBounds)
+                {
+                    String cell = board[startingX][startingY];
+                    if (cell == symbol)
+                    {
+                        runningCount++;
+                    } else {
+                        runningCount = 0;
+                    }
+                    startingX--;
+                    startingY++;
+                }
                 break;
             case "diagonalRight":
+                stepsX = x - 1;
+                stepsY = y - 1; 
+                if (stepsX < stepsY)
+                {
+                    startingX = 0;
+                    startingY = y - stepsX;
+                } else {
+                    startingX = x - stepsY;
+                    startingY = 0;
+                while(startingX <= xBounds && startingY <= yBounds)
+                {
+                    String cell = board[startingX][startingY];
+                    if (cell == symbol)
+                    {
+                        runningCount++;
+                    } else {
+                        runningCount = 0;
+                    }
+                    startingX++;
+                    startingY++;
+                }
                 break;
+            }
+        }
+        if (runningCount >= 3)
+        {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -144,11 +216,21 @@ public class TicTacToe
             board[cell[0]][cell[1]] = "O";
         }
         
-        turn.next();
+        winner = evaluateGame(cell);
+        if (winner)
+        {
+            System.out.print(turn.toString() + "WINS!");
+            System.exit(0);
+        } else {
+            turn.next();
+        }
     }
 
     public static void main(String[] args) {
         TicTacToe game = new TicTacToe(4, 6);
-        game.PlayRound();
+        while (true)
+        {
+            game.PlayRound();
+        }
     }
 }
