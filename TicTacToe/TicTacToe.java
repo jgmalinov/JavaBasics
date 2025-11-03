@@ -63,9 +63,15 @@ public class TicTacToe
 
     private int[] findCell(int num)
     {
-        int row = (int) Math.ceil(num / sizeY);
-        int column = (num % sizeY) - 1;
-        return new int[] {row, column};
+        double row = Math.ceil((double)num / (double)sizeY) - 1;
+        double column;
+        if (num <= sizeY)
+        {
+            column = num - 1;
+        } else {
+            column = num - (row * sizeY + 1);
+        }
+        return new int[] {(int) row, (int) column};
     }
 
     public boolean evaluateGame(int[] cell)
@@ -141,37 +147,8 @@ public class TicTacToe
                 }
                 break;
             case "diagonalLeft":
-                stepsX = xBounds - x;
-                stepsY = y + 1; 
-                if (stepsX < stepsY)
-                {
-                    startingX = xBounds;
-                    startingY = y - stepsX;
-                } else {
-                    startingX = x + stepsY;
-                    startingY = 0;
-                }
-
-                while(startingX >= 0 && startingY <= yBounds)
-                {
-                    String cell = board[startingX][startingY];
-                    if (cell.equals(symbol))
-                    {
-                        runningCount++;
-                        if (runningCount == 3)
-                        {
-                            return true;
-                        }
-                    } else {
-                        runningCount = 0;
-                    }
-                    startingX--;
-                    startingY++;
-                }
-                break;
-            case "diagonalRight":
-                stepsX = x - 1;
-                stepsY = y - 1; 
+                stepsX = x;
+                stepsY = y; 
                 if (stepsX < stepsY)
                 {
                     startingX = 0;
@@ -179,6 +156,8 @@ public class TicTacToe
                 } else {
                     startingX = x - stepsY;
                     startingY = 0;
+                }
+
                 while(startingX <= xBounds && startingY <= yBounds)
                 {
                     String cell = board[startingX][startingY];
@@ -193,6 +172,33 @@ public class TicTacToe
                         runningCount = 0;
                     }
                     startingX++;
+                    startingY++;
+                }
+                break;
+            case "diagonalRight":
+                stepsX = xBounds - x;
+                stepsY = y; 
+                if (stepsX < stepsY)
+                {
+                    startingX = xBounds;
+                    startingY = y - stepsX;
+                } else {
+                    startingX = x + stepsY;
+                    startingY = 0;
+                while(startingX >= 0 && startingY <= yBounds)
+                {
+                    String cell = board[startingX][startingY];
+                    if (cell.equals(symbol))
+                    {
+                        runningCount++;
+                        if (runningCount == 3)
+                        {
+                            return true;
+                        }
+                    } else {
+                        runningCount = 0;
+                    }
+                    startingX--;
                     startingY++;
                 }
                 break;
