@@ -8,11 +8,6 @@ public class TicTacToe
     public enum Player {
         PLAYER1,
         PLAYER2;
-
-        public Player next()
-        {
-            return this == PLAYER1 ? PLAYER2 : PLAYER1;
-        }
     }
     public Player turn;
     public String[][] board;
@@ -68,8 +63,8 @@ public class TicTacToe
 
     private int[] findCell(int num)
     {
-        int row = (int) Math.ceil(sizeY / num) - 1;
-        int column = num - 1;
+        int row = (int) Math.ceil(num / sizeY);
+        int column = (num % sizeY) - 1;
         return new int[] {row, column};
     }
 
@@ -90,6 +85,11 @@ public class TicTacToe
         }
     }
 
+    public void next()
+    {
+        this.turn = this.turn == Player.PLAYER1 ? Player.PLAYER2 : Player.PLAYER1;
+    }
+
     public boolean check(String axis, int x, int y)
     {
         String symbol = turn == Player.PLAYER1 ? "X" : "O";
@@ -105,31 +105,39 @@ public class TicTacToe
             case "horizontal":
                 startingX = x;
                 startingY = 0;
-                while (y <= yBounds)
+                while (startingY <= yBounds)
                 {
                     String cell = board[startingX][startingY];
-                    if (cell == symbol)
+                    if (cell.equals(symbol))
                     {
                         runningCount++;
+                        if (runningCount == 3)
+                        {
+                            return true;
+                        }
                     } else {
                         runningCount = 0;
                     }
-                    y++;
+                    startingY++;
                 }
                 break;
             case "vertical":
                 startingX = 0;
                 startingY = y;
-                while (y <= xBounds)
+                while (startingX <= xBounds)
                 {
                     String cell = board[startingX][startingY];
-                    if (cell == symbol)
+                    if (cell.equals(symbol))
                     {
                         runningCount++;
+                        if (runningCount == 3)
+                        {
+                            return true;
+                        }
                     } else {
                         runningCount = 0;
                     }
-                    y++;
+                    startingX++;
                 }
                 break;
             case "diagonalLeft":
@@ -147,9 +155,13 @@ public class TicTacToe
                 while(startingX >= 0 && startingY <= yBounds)
                 {
                     String cell = board[startingX][startingY];
-                    if (cell == symbol)
+                    if (cell.equals(symbol))
                     {
                         runningCount++;
+                        if (runningCount == 3)
+                        {
+                            return true;
+                        }
                     } else {
                         runningCount = 0;
                     }
@@ -170,9 +182,13 @@ public class TicTacToe
                 while(startingX <= xBounds && startingY <= yBounds)
                 {
                     String cell = board[startingX][startingY];
-                    if (cell == symbol)
+                    if (cell.equals(symbol))
                     {
                         runningCount++;
+                        if (runningCount == 3)
+                        {
+                            return true;
+                        }
                     } else {
                         runningCount = 0;
                     }
@@ -182,12 +198,7 @@ public class TicTacToe
                 break;
             }
         }
-        if (runningCount >= 3)
-        {
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 
     public void PlayRound()
@@ -220,9 +231,10 @@ public class TicTacToe
         if (winner)
         {
             System.out.print(turn.toString() + "WINS!");
+            printBoard();
             System.exit(0);
         } else {
-            turn.next();
+            next();
         }
     }
 
