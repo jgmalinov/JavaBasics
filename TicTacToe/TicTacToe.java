@@ -9,6 +9,8 @@ public class TicTacToe
         PLAYER1,
         PLAYER2;
     }
+    public int Player1Wins;
+    public int Player2Wins;
     public Player turn;
     public String[][] board;
 
@@ -18,11 +20,16 @@ public class TicTacToe
         this.sizeY = y;
         this.board = new String[x][y];
         this.turn = Player.PLAYER1;
+        setBoard();
+    }
 
+    public void setBoard()
+    {
+        turn = Player.PLAYER1;
         int num = 1;
         for(String[] row: board)
         {
-            for(int i = 0; i < y; i++)
+            for(int i = 0; i < sizeY; i++)
             {
                 row[i] = Integer.toString(num);
                 num++;
@@ -95,6 +102,52 @@ public class TicTacToe
     {
         this.turn = this.turn == Player.PLAYER1 ? Player.PLAYER2 : Player.PLAYER1;
     }
+
+    public void printLogo() {
+    System.out.println("  _______ _        _______           _______           ");
+    System.out.println(" |__   __(_)      |__   __|         |__   __|          ");
+    System.out.println("    | |   _  ___     | | __ _  ___     | | ___   ___   ");
+    System.out.println("    | |  | |/ __|    | |/ _` |/ __|    | |/ _ \\ / _ \\  ");
+    System.out.println("    | |  | | (__     | | (_| | (__     | | (_) | (_) | ");
+    System.out.println("    |_|  |_|\\___|    |_|\\__,_|\\___|    |_|\\___/ \\___/  ");
+    System.out.println("                                                      ");
+    System.out.println("               Welcome to TicTacToe!                  ");
+    System.out.println("------------------------------------------------------");
+}
+
+
+public void printTally() {
+    System.out.println();
+    System.out.println("========== SCORE TALLY ==========");
+    System.out.println(" Player 1 Wins: " + Player1Wins);
+    System.out.println(" Player 2 Wins: " + Player2Wins);
+    System.out.println("=================================");
+    System.out.println();
+}
+
+public boolean newGame() {
+    System.out.println();
+    System.out.println("========== Continue? Y/N ==========");
+    Scanner scn = new Scanner(System.in);
+    while (true)
+    {
+        String inpt = scn.nextLine().trim().toUpperCase();
+        if (inpt.equals("Y")){
+            return true;
+        } else if(inpt.equals("N")) {
+            return false;
+        } else {
+            System.out.println("You must select either 'Y' or 'N");
+        }
+    }
+}
+
+
+    public void clearConsole() {
+    for (int i = 0; i < 50; i++) {
+        System.out.println();
+    }
+}
 
     public boolean check(String axis, int x, int y)
     {
@@ -185,6 +238,7 @@ public class TicTacToe
                 } else {
                     startingX = x + stepsY;
                     startingY = 0;
+                }
                 while(startingX >= 0 && startingY <= yBounds)
                 {
                     String cell = board[startingX][startingY];
@@ -202,7 +256,6 @@ public class TicTacToe
                     startingY++;
                 }
                 break;
-            }
         }
         return false;
     }
@@ -210,6 +263,8 @@ public class TicTacToe
     public void PlayRound()
     {
         Scanner scn = new Scanner(System.in);
+        clearConsole();
+        printLogo();
         System.out.println(turn + "'s turn!");
         printBoard();
         System.out.println("Make your move!");
@@ -236,9 +291,24 @@ public class TicTacToe
         winner = evaluateGame(cell);
         if (winner)
         {
-            System.out.print(turn.toString() + "WINS!");
+            if (turn == Player.PLAYER1) {
+                Player1Wins++;
+            } else {
+                Player2Wins++;
+            }
+            clearConsole();
+            System.out.print(turn.toString() + "WINS!\n");
+            printTally();
             printBoard();
-            System.exit(0);
+            boolean continuePlaying =  newGame();
+            if (continuePlaying)
+            {
+                setBoard();
+                turn = Player.PLAYER2;
+                next();
+            } else {
+                System.exit(0);
+            }
         } else {
             next();
         }
